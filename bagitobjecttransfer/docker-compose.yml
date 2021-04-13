@@ -13,9 +13,9 @@ services:
     env_file:
       - ./.dockerenv
     volumes:
-      - mysql-database:/var/lib/mysql
-      - ./mysql/mysqld.cnf:/etc/mysql/mysqld.cnf
-      - ./logs:/var/log/mysql
+      - mysql-database:/var/lib/mysql/
+      - ./docker/mysql/mysqld.cnf:/etc/mysql/mysqld.cnf
+      - ./docker/logs/:/var/log/mysql/
 
   email:
     image: mailhog/mailhog
@@ -35,10 +35,10 @@ services:
     container_name: recordtransfer_django_app
     command: python3 manage.py runserver 0.0.0.0:8000 --settings=bagitobjecttransfer.settings.docker
     volumes:
-      - ./:/app
       - temp-directory:/tmp
-      - ./logs/rqworker.log:/var/log/django-rq/rqworker.log
-      - ./logs/recordtransfer.log:/var/log/django/recordtransfer.log
+      - ./:/app
+      - ./docker/logs/:/var/log/django-rq/
+      - ./docker/logs/:/var/log/django/
     ports:
       - 8000:8000
     env_file:
@@ -55,10 +55,10 @@ services:
     container_name: recordtransfer_rq_workers
     command: python3 manage.py rqworker default
     volumes:
-      - ./:/app
       - temp-directory:/tmp
-      - ./logs/rqworker.log:/var/log/django-rq/rqworker.log
-      - ./logs/recordtransfer.log:/var/log/django/recordtransfer.log
+      - ./:/app
+      - ./docker/logs/:/var/log/django-rq/
+      - ./docker/logs/:/var/log/django/
     env_file:
       - ./.dockerenv
     environment:
@@ -73,8 +73,8 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-      - ./logs/redis-server.log:/var/log/redis/redis-server.log
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./docker/logs/:/var/log/redis/
     environment:
       REDIS_REPLICATION_MODE: master
 
